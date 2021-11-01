@@ -2,6 +2,8 @@
 
 OpenShift Service Mesh federation configuration for IBM Systems Z Amd P 
 
+derived from github.com/maistra/istio/pkg/servicemesh/federation/example/config-poc
+
 
 ## Service Mesh Federation Configuration Test Scripts
 
