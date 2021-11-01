@@ -1,6 +1,6 @@
 # OSSM-federation-zap-config
 
-OpenShift Service Mesh federation configuration for IBM Systems Z Amd P 
+OpenShift Service Mesh federation configuration for IBM Systems Z And P 
 
 derived from github.com/maistra/istio/pkg/servicemesh/federation/example/config-poc
 
@@ -121,14 +121,14 @@ run `./test-federation.sh`.  It should give you results something like:
 ```
 ./test-federation.sh
 
-##### Using the following kubeconfig files:
+#### Using the following kubeconfig files:
 
 mesh1: /opt/clusters-deploy/maistra-qez-49/auth/kubeconfig
 mesh2: /opt/clusters-deploy/kiali-qez-49/auth/kubeconfig
 
-##### check status of federation
+#### check status of federation
 
-##### oc1 -n mesh1-system get servicemeshpeer mesh2 -o json | jq .status:
+#### oc1 -n mesh1-system get servicemeshpeer mesh2 -o json | jq .status:
 
 {
   "discoveryStatus": {
@@ -157,7 +157,7 @@ mesh2: /opt/clusters-deploy/kiali-qez-49/auth/kubeconfig
   }
 }
 
-##### oc2 -n mesh2-system get servicemeshpeer mesh1 -o json | jq .status:
+#### oc2 -n mesh2-system get servicemeshpeer mesh1 -o json | jq .status:
 
 {
   "discoveryStatus": {
@@ -185,9 +185,9 @@ mesh2: /opt/clusters-deploy/kiali-qez-49/auth/kubeconfig
   }
 }
 
-##### Check if services from mesh1 are imported into mesh2:
+#### Check if services from mesh1 are imported into mesh2:
 
-##### oc2 -n mesh2-system get importedservicesets mesh1 -o json | jq .status:
+#### oc2 -n mesh2-system get importedservicesets mesh1 -o json | jq .status:
 
 {
   "importedServices": [
@@ -210,9 +210,9 @@ mesh2: /opt/clusters-deploy/kiali-qez-49/auth/kubeconfig
   ]
 }
 
-##### deploy v2 ratings system into mesh1 and mesh2
+#### deploy v2 ratings system into mesh1 and mesh2
 
-##### manual steps to test:
+#### manual steps to test:
 
   1. Open http://istio-ingressgateway-mesh2-system.apps.kiali-qez-49.maistra.upshift.redhat.com/productpage
   2. Refresh the page several times and observe requests hitting either the mesh1 or the mesh2 cluster.
@@ -223,19 +223,9 @@ Server listening on: http://0.0.0.0:9080
 Server listening on: http://0.0.0.0:9080
 ```
 
-#### Uninstaller
+### Uninstallers
 
-No installation procedure is complete without an uninstaller, so we give you: `uninstall-libvirt.sh`
+the script `tools/cleanup.sh` can be run to delete all of the federation test artifacts. 
 
-```
-# Add extra options to the haproxy daemon here. This can be useful for
-# specifying multiple configuration files with multiple -f options.
-# See haproxy(1) for a complete list of options.
-OPTIONS="-f /etc/haproxy/federation.cfg"
-```
- 4. restart the haproxy service:
-```
-systemctl restart haproxy
-```
 
 
