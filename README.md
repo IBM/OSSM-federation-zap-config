@@ -7,9 +7,19 @@ derived from github.com/maistra/istio/pkg/servicemesh/federation/example/config-
 
 ## Service Mesh Federation Configuration Test Scripts
 
+### Overview
+
+OSSM Federation connects groups of microservices managed under two different service mesh control planes. 
+
+The practical use case of this is to do more advanced load sharing and management on e.g. two geographically separated clusters.  
+
+Never the less, for development and test purposes, it makes sense to configure your two flights of micro-services on the same cluster initially, as this case is the simplest to configure the environment for. 
+
+Configuring two clusters' environments to support OSSM federation between them 
+
 ### Prerequisites
 
-The prerequisites for all installations of Multi-Cluster Service Mesh federation are:
+The prerequisites for all installations of OSSM federation are:
 
  1.  Install the Service Mesh, Kiali and Jaeger operators on the clusters; use the 'install to all namespaces' option
  2.  Set environment variables MESH1-KUBECONFIG and MESH2-KUBECONFIG to be the kubeconfig files for the two clusters you're going to run federated service mesh installations on, e.g.:
@@ -25,8 +35,6 @@ These files can be found, typically, stashed away in the `auth` directory of the
 
 If you are testing federated services on two different service meshes on the same cluster, you can use the `install_onecluster.sh` script without any further system configuration.
 
-Routing between the 
-
 
 ### "Cloud" multi-cluster federation
 
@@ -36,9 +44,16 @@ Everything for a pair of clusters which were provisioned with e.g. openstack can
 
 Once the install is complete, this script installs bookinfo into the following
 namespaces:
+```
   mesh1-bookinfo
   mesh2-bookinfo
 ```
+which use the following OSSM control plane namespaces, respectively:
+```
+  mesh1-system
+  mesh2-system
+  ```
+
 Redirect to the aliased service through the egress gateway:
 
 You can redirect mesh2-bookinfo to use the ratings service in mesh1-bookinfo by
