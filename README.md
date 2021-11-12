@@ -106,21 +106,15 @@ OPTIONS="-f /etc/haproxy/federation.cfg"
 
 The script for installing federation tests on two libvirt IPI-installed clusters which are on the same host is `./install-libvirt.sh`. 
 
-`install-libvirt.sh` 
+`install-libvirt.sh` does the following:
 
-     1. sets up the service mesh control plane, service mesh member role and bookinfo test projects.
- 
-     2. installs the NodePort services
-     
-     3. opens up the appropriate firewalls in the libvirt zone
-     
-     4. generates & installs the proxy configuration file `federation.cfg`
-     
-     5. restarts haproxy with the additional proxy configuration
-     
-     6. sets up the federation plane 
-
-     7. deploys the two bookinfo projects that will be federated in the two clusters
+ 1. sets up the service mesh control plane, service mesh member role and bookinfo test projects
+ 2. installs the NodePort services  
+ 3. opens up the appropriate firewalls in the libvirt zone
+ 4. generates & installs the proxy configuration file `federation.cfg`
+ 5. restarts haproxy with the additional proxy configuration
+ 6. sets up the federation plane 
+ 7. deploys the two bookinfo projects that will be federated in the two clusters
 
 
 ### OSSM Multi-cluster Federation provisioned on two different hosts, either IPI libvirt, PowerVM or z/VM, or bare metal installs
