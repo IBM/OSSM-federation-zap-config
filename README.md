@@ -68,6 +68,7 @@ Add the following VirtualService to mesh2.  If you've tested redirecting to the
 aliased service, make sure to remove the ratings.mesh2-bookinfo.svc.cluster.local
 from the hosts list in the mesh2-imports/ratings-aliased-mesh1 VirtualService.
 
+```
 kind: VirtualService
 apiVersion: networking.istio.io/v1beta1
 metadata:
@@ -95,8 +96,7 @@ In this case:
  1a. set   MESH1_ADDRESS and MESH2_ADDRESS if each of the two clusters are on different hosts. 
  2.  Edit the `OPTIONS` field in `/etc/sysconfig/haproxy` file so it reads:
 
-```
-# Add extra options to the haproxy daemon here. This can be useful for
+```# Add extra options to the haproxy daemon here. This can be useful for
 # specifying multiple configuration files with multiple -f options.
 # See haproxy(1) for a complete list of options.
 OPTIONS="-f /etc/haproxy/federation.cfg"
