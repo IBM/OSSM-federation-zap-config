@@ -15,7 +15,9 @@ The practical use case of this is to do more advanced load sharing and managemen
 
 Never the less, for development and test purposes, it makes sense to configure your two flights of micro-services on the same cluster initially, as this case is the simplest to configure the environment for. 
 
-Configuring two clusters' environments to support OSSM federation between them 
+Configuring two clusters' environments to support OSSM federation between them is also relatively simple in cloud environments, as you can use the LoadBalancer service type to route your applications' data within the federated data plane, and routing between the clusters is handled by the cloud provider's load balancer.  
+
+However, in clusters provisioned on 'bare metal' systems, and virtualized on IBM System Z and Power systems, you need to use the NodePort service type to route your applications' data within the federated data planes, but between the nodes of the clusters.  This means you need to make sure to open the necessary firewall ports, and make sure data can be routed between the nodes of one cluster, to the nodes of the other.  This _can_ mean taking a good hard look at your DNS settings, and provisioning a load balancer in your environment, external to the two clusters. The example scripts for these cases assume you are using `haproxy` for the load balancer and `firewalld` for your firewall; for deployment in production environments, please feel free to use these scripts as examples of what you'll need to do in your own environments.     
 
 ### Prerequisites
 
