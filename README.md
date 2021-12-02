@@ -70,23 +70,29 @@ OPTIONS="-f /etc/haproxy/federation.cfg"
 	g. deploys the two bookinfo projects that will be federated in the two clusters
 
 2. Check the federation configuration is successfully copied to location /etc/haproxy/
+```
 	# cat /etc/haproxy/federation.cfg
 
 3. Check the firewall is opened for discovery and service ports
+	
 	# grep -w '<discovery_port/service_port>/tcp' /etc/services
 	e.g. # grep -w '32568/tcp' /etc/services
-
 	Note: If firewall is not opened, manually copy front end and backend sections from federation.cfg to /etc/haproxy/haproxy and restart haproxy service
 	
+	
 4. Check the two bookinfo projects, are up and running
+
 	# oc get pods -n mesh1-bookinfo
 	# oc get pods -n mesh2-bookinfo
+```
 
 
 ### OSSM Multi-cluster Federation provisioned on two different hosts, either IPI libvirt, PowerVM or z/VM, or bare metal installs
 
 1. Exchange public keys using ssh-copy-id so the host you're running the install scripts from can ssh into the other host without having to enter a password 
+```
 	# ssh-copy-id -i ~/.ssh/id_rsa.pub root@<host_ip>
+```
 2. Run the `install-multihost.sh` script instead of `./install-libvirt.sh` and check the results for respective cluster on respective host as mentioned above from step 2.
 
 ### Test Script
@@ -96,12 +102,15 @@ OPTIONS="-f /etc/haproxy/federation.cfg"
 Manual test:
 To check federation manually:
 1. To check the status of federation
+```
 # oc -n mesh1-system get servicemeshpeer mesh2 -o json | jq .status # on cluster1
 # oc -n mesh2-system get servicemeshpeer mesh1 -o json | jq .status # on cluster2
+```
 
 2. To check services imported from mesh1 into mesh2
+```
 # oc -n mesh2-system get importedservicesets mesh1 -o json | jq .status # on cluster2
-
+```
 3. To see federation in action, using the bookinfo app in mesh2
 1. On mesh1 cluster, run: oc logs -n mesh1-bookinfo deploy/ratings-v2-mysql -f
 2. On mesh2 cluster: oc logs -n mesh2-bookinfo deploy/ratings-v2-mysql -f
