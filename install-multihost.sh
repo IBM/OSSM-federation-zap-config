@@ -21,7 +21,6 @@ set -e
 source tools/common.sh
 
 log "Creating projects for mesh1"
-oc1 login https://api.ryan-kiali-p.maistra.upshift.redhat.com:6443 -u kubeadmin -p Rcivd-AT75h-PeqhT-YeepT --insecure-skip-tls-verify
 oc1 new-project mesh1-system || true
 oc1 new-project mesh1-bookinfo || true
 
@@ -30,7 +29,6 @@ oc1 apply -f export/smcp-multihost.yaml
 oc1 apply -f export/smmr.yaml
 
 log "Creating projects for mesh2"
-oc2 login https://api.powerocp47-1.crw-qe.com:6443 -u kubeadmin -p wM4ft-tb5dr-xIDYg-IV6Gf --insecure-skip-tls-verify
 oc2 new-project mesh2-system || true
 oc2 new-project mesh2-bookinfo || true
 
