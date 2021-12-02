@@ -17,7 +17,7 @@
 set -e
 
 # shellcheck disable=SC1091
-source common.sh
+source tools/common.sh
 
 log "Creating projects for mesh1"
 oc1 new-project mesh1-system || true

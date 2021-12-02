@@ -17,7 +17,7 @@
 set +e
 
 # shellcheck disable=SC1091
-source common.sh
+source tools/common.sh
 
 
 log "Retrieving root certificates"
@@ -89,17 +89,17 @@ oc2 delete -f examples/mongodb-remote-virtualservice.yaml
 oc2 delete -f examples/ratings-split-virtualservice.yaml
 
 log "Deleting bookinfo in mesh1"
-oc1 -n mesh1-bookinfo delete -f ../../../../../samples/bookinfo/platform/kube/bookinfo.yaml
-oc1 -n mesh1-bookinfo delete -f ../../../../../samples/bookinfo/platform/kube/bookinfo-ratings-v2.yaml
-oc1 -n mesh1-bookinfo delete -f ../../../../../samples/bookinfo/platform/kube/bookinfo-db.yaml
-oc1 -n mesh1-bookinfo delete -f ../../../../../samples/bookinfo/networking/destination-rule-all.yaml
+oc1 -n mesh1-bookinfo delete -f bookinfo/platform/kube/bookinfo.yaml
+oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kube/bookinfo-ratings-v2-mysql.yaml
+oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kube/bookinfo-mysql.yaml
+oc1 -n mesh1-bookinfo delete -f bookinfo/networking/destination-rule-all.yaml
 
 log "Deleting bookinfo in mesh2"
-oc2 -n mesh2-bookinfo delete -f ../../../../../samples/bookinfo/platform/kube/bookinfo.yaml
-oc2 -n mesh2-bookinfo delete -f ../../../../../samples/bookinfo/platform/kube/bookinfo-ratings-v2.yaml
-oc2 -n mesh2-bookinfo delete -f ../../../../../samples/bookinfo/networking/bookinfo-gateway.yaml
-oc2 -n mesh2-bookinfo delete -f ../../../../../samples/bookinfo/networking/destination-rule-all.yaml
-oc2 -n mesh2-bookinfo delete -f ../../../../../samples/bookinfo/networking/virtual-service-reviews-v3.yaml
+oc2 -n mesh2-bookinfo delete -f bookinfo/platform/kube/bookinfo.yaml
+oc2 -n mesh2-bookinfo apply -f bookinfo/platform/kube/bookinfo-ratings-v2-mysql.yaml
+oc2 -n mesh2-bookinfo delete -f bookinfo/networking/bookinfo-gateway.yaml
+oc2 -n mesh2-bookinfo delete -f bookinfo/networking/destination-rule-all.yaml
+oc2 -n mesh2-bookinfo delete -f bookinfo/networking/virtual-service-reviews-v3.yaml
 
 log "Disabling federation for mesh1"
 oc1 delete -f export/exportedserviceset.yaml

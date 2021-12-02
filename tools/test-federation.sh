@@ -17,7 +17,7 @@
 set +e
 
 # shellcheck disable=SC1091
-source common.sh
+source tools/common.sh
 
 log "check status of federation"
 
@@ -36,8 +36,8 @@ oc2 -n mesh2-system get importedservicesets mesh1 -o json | jq .status
 
 log "deploy v2 ratings system into mesh1 and mesh2"
 
-oc1 logs -n mesh1-bookinfo deploy/ratings-v2 -f &
-oc2 logs -n mesh2-bookinfo deploy/ratings-v2 -f &
+oc1 logs -n mesh1-bookinfo deploy/ratings-v2-mysql -f &
+oc2 logs -n mesh2-bookinfo deploy/ratings-v2-mysql -f &
 
 log "manual steps to test:
   1. Open http://$(oc2 -n mesh2-system get route istio-ingressgateway -o json | jq -r .spec.host)/productpage
