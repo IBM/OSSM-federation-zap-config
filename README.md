@@ -72,16 +72,18 @@ OPTIONS="-f /etc/haproxy/federation.cfg"
 2. Check the federation configuration is successfully copied to location /etc/haproxy/
 ```
 	# cat /etc/haproxy/federation.cfg
+```
 
 3. Check the firewall is opened for discovery and service ports
-	
+```	
 	# grep -w '<discovery_port/service_port>/tcp' /etc/services
 	e.g. # grep -w '32568/tcp' /etc/services
-	Note: If firewall is not opened, manually copy front end and backend sections from federation.cfg to /etc/haproxy/haproxy and restart haproxy service
-	
+	Note: If firewall is not opened, manually copy front end and backend sections from federation.cfg to /etc/haproxy/haproxy 
+	and restart haproxy service
+```	
 	
 4. Check the two bookinfo projects, are up and running
-
+```
 	# oc get pods -n mesh1-bookinfo
 	# oc get pods -n mesh2-bookinfo
 ```
