@@ -28,11 +28,12 @@ The prerequisites for all installations of OSSM federation are:
 e.g.:
 
 ```
-export MESH1-KUBECONFIG=/root/ipi/pipe-2/auth/kubeconfig
-export MESH2-KUBECONFIG=/root/second_cluster /kubeconfig
+export MESH1_KUBECONFIG=/root/ipi/pipe-2/auth/kubeconfig
+export MESH2_KUBECONFIG=/root/second_cluster/kubeconfig
 
 Note: For different hosts, copy kubeconfig of second cluster on the host having first cluster using scp command at path "/root/second_cluster/kubeconfig"
-``` 
+```
+ 3.  Run the ./tools/mod-bookinfo-images.sh to update the bookinfo images. 
 
 ### "Single Cluster" federation
 
@@ -48,7 +49,7 @@ To install `haproxy` on RHEL 8, `sudo yum install -y haproxy`
 In this case:
  1a.  set the PROXY_HOST environment variable if running both clusters on same host 
  1b. set   MESH1_ADDRESS and MESH2_ADDRESS if each of the two clusters are on different hosts. 
- 2.  Edit the `OPTIONS` field in `/etc/sysconfig/haproxy` file so it reads:
+ 2.  Edit the `OPTIONS` field in `/etc/sysconfig/haproxy` file so it reads on single/both hosts:
 
 ```# Add extra options to the haproxy daemon here. This can be useful for
 # specifying multiple configuration files with multiple -f options.
@@ -58,9 +59,8 @@ OPTIONS="-f /etc/haproxy/federation.cfg"
 
 ### OSSM Multi-cluster Federation on two libvirt IPI OCP clusters provisioned on the same host
 
-1. Run the ./tools/mod-bookinfo-images.sh to update the bookinfo images.
-2. Run ./install-libvirt.sh
-    a. This script creates mesh1-system,mesh1-bookinfo on cluster1 and mesh2-system,mesh2-bookinfo on cluster2.
+1. Run ./install-libvirt.sh
+	a. This script creates mesh1-system,mesh1-bookinfo on cluster1 and mesh2-system,mesh2-bookinfo on cluster2.
 	   Also, creates smcp and smmr in respective mesh1-system and mesh2-system namespaces.
 	b. Installs the NodePort services
 	c. Opens the appropriate firewalls in the libvirt zone
@@ -69,26 +69,25 @@ OPTIONS="-f /etc/haproxy/federation.cfg"
 	f. sets up the federation plane 
 	g. deploys the two bookinfo projects that will be federated in the two clusters
 
-3. Check the federation configuration is successfully copied to location /etc/haproxy/
+2. Check the federation configuration is successfully copied to location /etc/haproxy/
 	# cat /etc/haproxy/federation.cfg
 
-4. Check the firewall is opened for discovery and service ports
+3. Check the firewall is opened for discovery and service ports
 	# grep -w '<discovery_port/service_port>/tcp' /etc/services
 	e.g. # grep -w '32568/tcp' /etc/services
 
 	Note: If firewall is not opened, manually copy front end and backend sections from federation.cfg to /etc/haproxy/haproxy and restart haproxy service
 	
-5. Check the two bookinfo projects, are up and running
+4. Check the two bookinfo projects, are up and running
 	# oc get pods -n mesh1-bookinfo
 	# oc get pods -n mesh2-bookinfo
 
 
 ### OSSM Multi-cluster Federation provisioned on two different hosts, either IPI libvirt, PowerVM or z/VM, or bare metal installs
 
-1. Exchange public keys using ssh-copy-id so the host you're running the install scripts from can ssh into   the other host without having to enter a password 
+1. Exchange public keys using ssh-copy-id so the host you're running the install scripts from can ssh into the other host without having to enter a password 
 	# ssh-copy-id -i ~/.ssh/id_rsa.pub root@<host_ip>
-2. Run the ./tools/mod-bookinfo-images.sh to update the bookinfo images.
-3. Run the `install-multihost.sh` script instead of `./install-libvirt.sh` and check the results for respective cluster on respective host as mentioned above from step 3.
+2. Run the `install-multihost.sh` script instead of `./install-libvirt.sh` and check the results for respective cluster on respective host as mentioned above from step 2.
 
 ### Test Script
 
@@ -104,15 +103,16 @@ To check federation manually:
 # oc -n mesh2-system get importedservicesets mesh1 -o json | jq .status # on cluster2
 
 3. To see federation in action, using the bookinfo app in mesh2
-1. On mesh1 cluster, run: oc logs -n mesh1-bookinfo deploy/ratings-v2 -f
-2. On mesh2 cluster: oc logs -n mesh2-bookinfo deploy/ratings-v2 -f
+1. On mesh1 cluster, run: oc logs -n mesh1-bookinfo deploy/ratings-v2-mysql -f
+2. On mesh2 cluster: oc logs -n mesh2-bookinfo deploy/ratings-v2-mysql -f
 3. Open http://$(oc -n mesh2-system get route istio-ingressgateway -o json | jq -r .spec.host)/productpage
 4. Refresh the page several times and observe requests hitting either the mesh1 or the mesh2 cluster.
 ```
 
 ### Uninstallers
 
-the script `tools/cleanup.sh` can be run to delete all of the federation test artifacts. 
+the script `tools/uninstall-federation.sh` can be run to delete all of the federation test artifacts. 
+
 
 
 

@@ -17,7 +17,7 @@
 set +e
 
 # shellcheck disable=SC1091
-source common.sh
+source tools/common.sh
 
 log "check status of federation"
 
