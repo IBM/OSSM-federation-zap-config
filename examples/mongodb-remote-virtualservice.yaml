@@ -1,0 +1,15 @@
+# VirtualService resource that redirects the local service to the remote
+# services.  This only works with passthrough.
+
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: mysqldb-remote
+  namespace: mesh2-bookinfo
+spec:
+  hosts:
+    - mysqldb.mesh2-bookinfo.svc.cluster.local
+  tcp:
+    - route:
+        - destination:
+            host: mysqldb.mesh2-bookinfo.svc.mesh1-imports.local
