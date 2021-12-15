@@ -17,7 +17,7 @@
 set -e
 
 # shellcheck disable=SC1091
-source ../tools/common.sh
+source tools/common.sh
 
 log "Creating projects for mesh1"
 oc1 new-project mesh1-system || true
@@ -192,15 +192,16 @@ oc2 apply -f import/importedserviceset.yaml
 
 
 log "Installing bookinfo in mesh1"
-oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kubookinfo.yaml
-oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kubookinfo-ratings-v2.yaml
-oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kubookinfo-db.yaml
+oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kube/bookinfo.yaml
+oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kube/bookinfo-ratings-v2-mysql.yaml
+oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kube/bookinfo-mysql.yaml
+oc1 -n mesh1-bookinfo apply -f bookinfo/platform/kube/bookinfo-db.yaml
 oc1 -n mesh1-bookinfo apply -f bookinfo/networking/destination-rule-all.yaml
 
 log "Installing bookinfo in mesh2"
-oc2 -n mesh2-bookinfo apply -f bookinfo/platform/kubookinfo.yaml
-oc2 -n mesh2-bookinfo apply -f bookinfo/platform/kubookinfo-ratings-v2.yaml
-oc2 -n mesh2-bookinfo apply -f bookinfo/networkibookinfo-gateway.yaml
+oc2 -n mesh2-bookinfo apply -f bookinfo/platform/kube/bookinfo.yaml
+oc2 -n mesh2-bookinfo apply -f bookinfo/platform/kube/bookinfo-ratings-v2-mysql.yaml
+oc2 -n mesh2-bookinfo apply -f bookinfo/networking/bookinfo-gateway.yaml
 oc2 -n mesh2-bookinfo apply -f bookinfo/networking/destination-rule-all.yaml
 oc2 -n mesh2-bookinfo apply -f bookinfo/networking/virtual-service-reviews-v3.yaml
 
@@ -236,8 +237,8 @@ Check if services from mesh1 are imported into mesh2:
 
 To see federation in action, use the bookinfo app in mesh2. For example:
 
-  1. Run this command in the mesh1 cluster: oc logs -n mesh1-bookinfo deploy/ratings-v2 -f
-  2. Run this command in the mesh2 cluster: oc logs -n mesh2-bookinfo deploy/ratings-v2 -f
+  1. Run this command in the mesh1 cluster: oc logs -n mesh1-bookinfo deploy/ratings-v2-mysql -f
+  2. Run this command in the mesh2 cluster: oc logs -n mesh2-bookinfo deploy/ratings-v2-mysql -f
   3. Open http://$(oc2 -n mesh2-system get route istio-ingressgateway -o json | jq -r .spec.host)/productpage
   4. Refresh the page several times and observe requests hitting either the mesh1 or the mesh2 cluster.
 

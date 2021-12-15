@@ -18,7 +18,7 @@
 
 cd bookinfo/platform/kube/ || exit
 # shellcheck disable=SC2013,2035  
-for i in $(grep 'image:' *.yaml | cut -d':' -f 1 ) 
+for i in $(grep 'image:' *.yaml | cut -d':' -f 1 | sort --unique)
 do 
-sed -i '/image:/s/2.1.0/2.1-z/g' "${i}"
+sed -i '/image:/s/2.1/2.1.0-ibm-p/g' "${i}"
 done

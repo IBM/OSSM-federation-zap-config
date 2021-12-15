@@ -15,7 +15,7 @@ spec:
   - type: NameSelector
     nameSelector:
       namespace: mesh1-bookinfo
-      name: mongodb
+      name: mysqldb
       alias:
         namespace: bookinfo
-        name: mongodb
+        name: mysqldb
