@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # Copyright Red Hat, Inc.
@@ -17,7 +16,7 @@
 
 set -e
 
-# shellcheck disable=SC1091
+shellcheck disable=SC1091,SC2129
 source tools/common.sh
 
 log "Creating projects for mesh1"
@@ -66,29 +65,29 @@ else
   MESH1_HOSTNAME=$(oc1 -n mesh1-system get route mesh2-ingress -o jsonpath="{.spec.host}")
   MESH2_HOSTNAME=$(oc2 -n mesh2-system get route mesh1-ingress -o jsonpath="{.spec.host}")
 
-  echo MESH1_DISCOVERY_PORT=${MESH1_DISCOVERY_PORT}
-  echo MESH1_SERVICE_PORT=${MESH1_SERVICE_PORT}
+  echo MESH1_DISCOVERY_PORT="${MESH1_DISCOVERY_PORT}"
+  echo MESH1_SERVICE_PORT="${MESH1_SERVICE_PORT}"
   
-  echo MESH2_DISCOVERY_PORT=${MESH2_DISCOVERY_PORT}
-  echo MESH2_SERVICE_PORT=${MESH2_SERVICE_PORT}
+  echo MESH2_DISCOVERY_PORT="${MESH2_DISCOVERY_PORT}"
+  echo MESH2_SERVICE_PORT="${MESH2_SERVICE_PORT}"
 
-  echo MESH1_HOSTNAME=${MESH1_HOSTNAME}
-  echo MESH2_HOSTNAME=${MESH2_HOSTNAME}
+  echo MESH1_HOSTNAME="${MESH1_HOSTNAME}"
+  echo MESH2_HOSTNAME="${MESH2_HOSTNAME}"
 
   log "temporarily opened firewall ports may be closed later with firewall-cmd --reload"
   echo "opening firewall port for $MESH1_ADDRESS $MESH1_SERVICE_PORT"
 
   for ZONE in public libvirt dmz
   do
-    for PORT in ${MESH1_SERVICE_PORT}   \
-                ${MESH1_DISCOVERY_PORT} \
-                ${MESH2_SERVICE_PORT}   \
-                ${MESH2_DISCOVERY_PORT} 
+    for PORT in "${MESH1_SERVICE_PORT}"   \
+                "${MESH1_DISCOVERY_PORT}" \
+                "${MESH2_SERVICE_PORT}"   \
+                "${MESH2_DISCOVERY_PORT}" 
     do
       for PROTO in udp tcp
       do
-        firewall-cmd --add-port=${PORT}/${PROTO} --zone=${ZONE}
-        ssh ${MESH2_ADDRESS} firewall-cmd --add-port=${PORT}/${PROTO} --zone=${ZONE}
+        firewall-cmd --add-port="${PORT}"/"${PROTO}" --zone="${ZONE}"
+        ssh "${MESH2_ADDRESS}" firewall-cmd --add-port="${PORT}"/"${PROTO}" --zone="${ZONE}"
       done
     done
   done
@@ -114,7 +113,7 @@ backend mesh1-service
     balance source " >> mesh1-federation.cfg
 for NodeName in $(oc1 get nodes -o wide -o jsonpath="{.items[*].status.addresses[1].address}")
 do
-  NodeIP=$(oc1 get node ${NodeName} -o wide -o jsonpath="{.status.addresses[0].address}")
+  NodeIP=$(oc1 get node "${NodeName}" -o wide -o jsonpath="{.status.addresses[0].address}")
   echo "    server      $NodeName ${NodeIP}:${MESH1_SERVICE_PORT} check" >> mesh1-federation.cfg
 done
 
@@ -125,7 +124,7 @@ backend mesh1-discovery
 
 for NodeName in $(oc1 get nodes -o wide -o jsonpath="{.items[*].status.addresses[1].address}")
 do
-  NodeIP=$(oc1 get node ${NodeName} -o wide -o jsonpath="{.status.addresses[0].address}")
+  NodeIP=$(oc1 get node "${NodeName}" -o wide -o jsonpath="{.status.addresses[0].address}")
   echo "    server      $NodeName ${NodeIP}:${MESH1_DISCOVERY_PORT} check" >> mesh1-federation.cfg
 done
 
@@ -162,7 +161,7 @@ backend mesh2-service
 
 for NodeName in $(oc2 get nodes -o wide -o jsonpath="{.items[*].status.addresses[1].address}")
 do
-  NodeIP=$(oc2 get node ${NodeName} -o wide -o jsonpath="{.status.addresses[0].address}")
+  NodeIP=$(oc2 get node "${NodeName}" -o wide -o jsonpath="{.status.addresses[0].address}")
   echo "    server      $NodeName ${NodeIP}:${MESH2_SERVICE_PORT} check" >> mesh2-federation.cfg
 done
 
@@ -173,7 +172,7 @@ backend mesh2-discovery
 
 for NodeName in $(oc2 get nodes -o wide -o jsonpath="{.items[*].status.addresses[1].address}")
 do
-  NodeIP=$(oc2 get node ${NodeName} -o wide -o jsonpath="{.status.addresses[0].address}")
+  NodeIP=$(oc2 get node "${NodeName}" -o wide -o jsonpath="{.status.addresses[0].address}")
   echo "    server      $NodeName ${NodeIP}:${MESH2_DISCOVERY_PORT} check" >> mesh2-federation.cfg
 done
 #####
@@ -182,8 +181,8 @@ log "add '-f mesh1-federation.cfg' to /etc/sysconfig/haproxy OPTION variable and
 
 
 cp mesh1-federation.cfg /etc/haproxy/federation.cfg; systemctl daemon-reload; systemctl restart haproxy
-scp mesh2-federation.cfg ${MESH2_ADDRESS}:/etc/haproxy/federation.cfg
-ssh ${MESH2_ADDRESS} 'systemctl daemon-reload; systemctl restart haproxy'
+scp mesh2-federation.cfg "${MESH2_ADDRESS}":/etc/haproxy/federation.cfg
+ssh "${MESH2_ADDRESS}" 'systemctl daemon-reload; systemctl restart haproxy'
 
 log "Enabling federation for mesh1"
 
