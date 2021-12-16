@@ -16,7 +16,8 @@
 
 set -e
 
-shellcheck disable=SC1091,SC2129
+# shellcheck disable=SC1091
+# shellcheck disable=SC2129
 source tools/common.sh
 
 log "Creating projects for mesh1"
@@ -95,90 +96,94 @@ fi
 
 log "Generating a proxy configuration for mesh1 & mesh2 to pass packets to each other on the specified ports"
 
+##### write backends for mesh1-federation.cfg proxy
 sed -e "s:{{MESH1_DISCOVERY_PORT}}:$MESH1_DISCOVERY_PORT:g" \
     -e "s:{{MESH1_SERVICE_PORT}}:$MESH1_SERVICE_PORT:g"     \
     -e "s:{{MESH2_DISCOVERY_PORT}}:$MESH2_DISCOVERY_PORT:g" \
     -e "s:{{MESH2_SERVICE_PORT}}:$MESH2_SERVICE_PORT:g"     \
-    federation.cfg.template > mesh1-federation.cfg
+    haproxy/mesh1-federation.cfg.template > mesh1-federation.cfg
 
-sed -e "s:{{MESH1_DISCOVERY_PORT}}:$MESH1_DISCOVERY_PORT:g" \
-    -e "s:{{MESH1_SERVICE_PORT}}:$MESH1_SERVICE_PORT:g"     \
-    -e "s:{{MESH2_DISCOVERY_PORT}}:$MESH2_DISCOVERY_PORT:g" \
-    -e "s:{{MESH2_SERVICE_PORT}}:$MESH2_SERVICE_PORT:g"     \
-    federation.cfg.template > mesh2-federation.cfg
-
+{ 
 echo "
 backend mesh1-service
     mode tcp
-    balance source " >> mesh1-federation.cfg
+    balance source " 
 for NodeName in $(oc1 get nodes -o wide -o jsonpath="{.items[*].status.addresses[1].address}")
 do
   NodeIP=$(oc1 get node "${NodeName}" -o wide -o jsonpath="{.status.addresses[0].address}")
-  echo "    server      $NodeName ${NodeIP}:${MESH1_SERVICE_PORT} check" >> mesh1-federation.cfg
+  echo "    server      $NodeName ${NodeIP}:${MESH1_SERVICE_PORT} check" 
 done
 
 echo "
 backend mesh1-discovery
     mode tcp
-    balance source " >> mesh1-federation.cfg
+    balance source " 
 
 for NodeName in $(oc1 get nodes -o wide -o jsonpath="{.items[*].status.addresses[1].address}")
 do
   NodeIP=$(oc1 get node "${NodeName}" -o wide -o jsonpath="{.status.addresses[0].address}")
-  echo "    server      $NodeName ${NodeIP}:${MESH1_DISCOVERY_PORT} check" >> mesh1-federation.cfg
+  echo "    server      $NodeName ${NodeIP}:${MESH1_DISCOVERY_PORT} check" 
 done
 
 echo "
 backend mesh2-service
     mode tcp
-    balance source " >> mesh1-federation.cfg
-echo "    server      mesh2-service-backend ${MESH2_ADDRESS}:${MESH2_SERVICE_PORT} check" >> mesh1-federation.cfg
+    balance source " 
+echo "    server      mesh2-service-backend ${MESH2_ADDRESS}:${MESH2_SERVICE_PORT} check" 
 
 echo "
 backend mesh2-discovery
     mode tcp
-    balance source " >> mesh1-federation.cfg
-echo "    server      mesh2-discovery-backend ${MESH2_ADDRESS}:${MESH2_DISCOVERY_PORT} check" >> mesh1-federation.cfg
+    balance source " 
+echo "    server      mesh2-discovery-backend ${MESH2_ADDRESS}:${MESH2_DISCOVERY_PORT} check" 
+} >> mesh1-federation.cfg
+
 
 ##### write backends for mesh2-federation.cfg proxy
+sed -e "s:{{MESH1_DISCOVERY_PORT}}:$MESH1_DISCOVERY_PORT:g" \
+    -e "s:{{MESH1_SERVICE_PORT}}:$MESH1_SERVICE_PORT:g"     \
+    -e "s:{{MESH2_DISCOVERY_PORT}}:$MESH2_DISCOVERY_PORT:g" \
+    -e "s:{{MESH2_SERVICE_PORT}}:$MESH2_SERVICE_PORT:g"     \
+    haproxy/mesh2-federation.cfg.template > mesh2-federation.cfg
 
+{
 echo "
 backend mesh1-service
     mode tcp
-    balance source " >> mesh2-federation.cfg
-echo "    server      mesh1-service-backend ${MESH1_ADDRESS}:${MESH1_SERVICE_PORT} check" >> mesh2-federation.cfg
+    balance source " 
+echo "    server      mesh1-service-backend ${MESH1_ADDRESS}:${MESH1_SERVICE_PORT} check" 
 
 echo "
 backend mesh1-discovery
     mode tcp
-    balance source " >> mesh2-federation.cfg
-echo "    server      mesh1-discovery-backend ${MESH1_ADDRESS}:${MESH1_DISCOVERY_PORT} check" >> mesh2-federation.cfg
+    balance source " 
+echo "    server      mesh1-discovery-backend ${MESH1_ADDRESS}:${MESH1_DISCOVERY_PORT} check" 
 
 echo "
 backend mesh2-service
     mode tcp
-    balance source " >> mesh2-federation.cfg
+    balance source " 
 
 for NodeName in $(oc2 get nodes -o wide -o jsonpath="{.items[*].status.addresses[1].address}")
 do
   NodeIP=$(oc2 get node "${NodeName}" -o wide -o jsonpath="{.status.addresses[0].address}")
-  echo "    server      $NodeName ${NodeIP}:${MESH2_SERVICE_PORT} check" >> mesh2-federation.cfg
+  echo "    server      $NodeName ${NodeIP}:${MESH2_SERVICE_PORT} check" 
 done
 
 echo "
 backend mesh2-discovery
     mode tcp
-    balance source " >> mesh2-federation.cfg
+    balance source " 
 
 for NodeName in $(oc2 get nodes -o wide -o jsonpath="{.items[*].status.addresses[1].address}")
 do
   NodeIP=$(oc2 get node "${NodeName}" -o wide -o jsonpath="{.status.addresses[0].address}")
-  echo "    server      $NodeName ${NodeIP}:${MESH2_DISCOVERY_PORT} check" >> mesh2-federation.cfg
+  echo "    server      $NodeName ${NodeIP}:${MESH2_DISCOVERY_PORT} check" 
 done
 #####
+} >> mesh2-federation.cfg
 
 log "add '-f mesh1-federation.cfg' to /etc/sysconfig/haproxy OPTION variable and restart haproxy..."
-
 
 cp mesh1-federation.cfg /etc/haproxy/federation.cfg; systemctl daemon-reload; systemctl restart haproxy
 scp mesh2-federation.cfg "${MESH2_ADDRESS}":/etc/haproxy/federation.cfg
