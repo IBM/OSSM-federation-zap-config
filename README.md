@@ -1,8 +1,30 @@
 # OSSM-federation-zap-config
 
-OpenShift Service Mesh federation configuration for IBM Systems P
+OpenShift Service Mesh federation configuration for IBM System Z/LinuxONE and IBM Power systems running OpenShift 4.6+ clusters. 
 
 derived from github.com/maistra/istio/pkg/servicemesh/federation/example/config-poc
+
+## Contributing
+
+### Issues
+
+Please feel free to submit bug reports to the github "Issues" queue attached to this github repository. They will be responded to within 30 days.
+
+### New Feature Requests
+
+Please feel free to submit bug reports to the github "Issues" queue attached to this github repository.  They will be responded to within 30 days.
+
+### Code
+
+After filing a new feature request or bug report, please feel free make a pull request of code in the following languages:
+ - Bourne shell
+ - YAML
+
+Please reference the github issue in your pull request. 
+
+### Documentation
+
+Please make a pull request of documentation in github markdown language.
 
 ## Service Mesh Federation Configuration Test Scripts
 
