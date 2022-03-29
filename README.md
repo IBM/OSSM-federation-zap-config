@@ -17,8 +17,8 @@ Please feel free to submit bug reports to the github "Issues" queue attached to 
 ### Code
 
 After filing a new feature request or bug report, please feel free make a pull request of code in the following languages:
- - Bourne shell
- - YAML
+ - Bourne shell (please test with ShellCheck https://github.com/koalaman/shellcheck)
+ - YAML (please test with yamllint https://github.com/adrienverge/yamllint)
 
 Please reference the github issue in your pull request. 
 
