@@ -10,6 +10,10 @@ derived from github.com/maistra/istio/pkg/servicemesh/federation/example/config-
 
 Please feel free to submit bug reports to the github "Issues" queue attached to this github repository. They will be responded to within 30 days.
 
+### Vulnerabilities
+
+Please feel free to submit bug reports regarding vulnerabilities to the github "Issues" queue attached to this github repository. Private communication of vulnerabilities is not supported. 
+
 ### New Feature Requests
 
 Please feel free to submit bug reports to the github "Issues" queue attached to this github repository.  They will be responded to within 30 days.
