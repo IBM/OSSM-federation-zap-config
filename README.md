@@ -2,7 +2,7 @@
 
 OpenShift Service Mesh federation configuration for IBM System Z/LinuxONE and IBM Power systems running OpenShift 4.6+ clusters. 
 
-derived from github.com/maistra/istio/pkg/servicemesh/federation/example/config-poc
+derived from https://github.com/maistra/istio/pkg/servicemesh/federation/example/config-poc
 
 
 ## Service Mesh Federation Configuration Test Scripts
